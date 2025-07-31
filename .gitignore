@@ -38,6 +38,3 @@ Thumbs.db
 
 # Log files
 *.log
-
-# Data files (uncomment if you don't want to track RDS files)
-# *.rds 
