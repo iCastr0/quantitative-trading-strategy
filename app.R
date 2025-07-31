@@ -2,9 +2,9 @@ library(shiny)
 library(tidyverse)
 library(DT)
 
-# ────────────────────────────────
+# ================================
 # STRATEGY EVALUATION FUNCTION
-# ────────────────────────────────
+# ================================
 eval_strategy <- function(data, threshold = 0.7, tp = 0.05, sl = -0.05) {
   if (nrow(data) == 0) return(NULL)
 
@@ -64,9 +64,9 @@ eval_strategy <- function(data, threshold = 0.7, tp = 0.05, sl = -0.05) {
   list(df = daily_returns, metrics = metrics)
 }
 
-# ────────────────────────────────
+# ================================
 # USER INTERFACE
-# ────────────────────────────────
+# ================================
 ui <- fluidPage(
   titlePanel("Interactive Backtest with Stop Loss and Take Profit"),
   sidebarLayout(
@@ -82,9 +82,9 @@ ui <- fluidPage(
   )
 )
 
-# ────────────────────────────────
+# ================================
 # SERVER
-# ────────────────────────────────
+# ================================
 server <- function(input, output, session) {
 
   data_input <- reactive({
@@ -126,7 +126,7 @@ server <- function(input, output, session) {
   })
 }
 
-# ────────────────────────────────
+# ================================
 # RUN APP
-# ────────────────────────────────
+# ================================
 shinyApp(ui, server)
