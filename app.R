@@ -1,5 +1,3 @@
-# app.R
-
 library(shiny)
 library(tidyverse)
 library(DT)
