@@ -1,6 +1,6 @@
-# ────────────────────────────────
+# ================================
 # 0. PACKAGES AND PARALLELIZATION
-# ────────────────────────────────
+# ================================
 library(tidyquant)
 library(tidyverse)
 library(tidymodels)
@@ -13,9 +13,9 @@ plan(multisession, workers = parallel::detectCores() - 1)
 set.seed(67)
 gc()
 
-# ────────────────────────────────
+# ================================
 # 1. DATA INGESTION
-# ────────────────────────────────
+# ================================
 tickers <- tq_index("SP500")$symbol
 tickers_sample <- sample(tickers, 50)
 
@@ -31,9 +31,9 @@ prices <- prices_raw %>%
 
 rm(prices_raw); gc()
 
-# ────────────────────────────────
+# ================================
 # 2. FEATURE ENGINEERING
-# ────────────────────────────────
+# ================================
 features <- prices %>%
   group_by(symbol) %>%
   arrange(date) %>%
@@ -60,25 +60,25 @@ data_ml <- features %>%
 
 gc()
 
-# ────────────────────────────────
+# ================================
 # 3. TRAIN / TEST SPLIT
-# ────────────────────────────────
+# ================================
 cutoff_date <- as.Date(quantile(as.numeric(data_ml$date), 0.8), origin = "1970-01-01")
 train <- data_ml %>% filter(date <= cutoff_date)
 test  <- data_ml %>% filter(date >  cutoff_date)
 rm(data_ml); gc()
 
-# ────────────────────────────────
+# ================================
 # 4. RECIPE
-# ────────────────────────────────
+# ================================
 recipe_rf <- recipe(target ~ SMA5 + SMA10 + RSI14 + MACD_diff + Volatility10 + Momentum5,
                     data = train) %>%
   step_zv(all_predictors()) %>%
   step_downsample(target)
 
-# ────────────────────────────────
+# ================================
 # 5. MODEL AND WORKFLOW
-# ────────────────────────────────
+# ================================
 rf_spec <- rand_forest(trees = 100, mtry = tune(), min_n = tune()) %>%
   set_engine("ranger", importance = "impurity") %>%
   set_mode("classification")
@@ -87,9 +87,9 @@ workflow_rf <- workflow() %>%
   add_recipe(recipe_rf) %>%
   add_model(rf_spec)
 
-# ────────────────────────────────
+# ================================
 # 6. TEMPORAL CROSS VALIDATION
-# ────────────────────────────────
+# ================================
 folds <- rolling_origin(
   data        = train,
   initial     = 300,
@@ -104,9 +104,9 @@ grid <- grid_random(
   size         = 4
 )
 
-# ────────────────────────────────
+# ================================
 # 7. HYPERPARAMETER TUNING
-# ────────────────────────────────
+# ================================
 tuned_rf <- tune_grid(
   workflow_rf,
   resamples = folds,
@@ -124,9 +124,9 @@ final_rf <- finalize_workflow(workflow_rf, best_params)
 rf_fit <- fit(final_rf, data = train)
 saveRDS(rf_fit, "rf_fit.rds")
 
-# ────────────────────────────────
+# ================================
 # 8. PREDICTIONS AND EXPORT FOR SHINY
-# ────────────────────────────────
+# ================================
 
 preds <- predict(rf_fit, test, type = "prob") %>%
   bind_cols(test) %>%
