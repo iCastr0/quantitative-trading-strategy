@@ -1,0 +1,43 @@
+# R specific files
+.RData
+.Rhistory
+.Rapp.history
+.Rprofile
+.Ruserprofile
+
+# R session files
+.Rsession
+
+# R package files
+*.Rcheck/
+*.tar.gz
+*.tgz
+*.zip
+
+# R documentation
+*.Rd
+*.Rmd
+*.html
+
+# R cache
+.Rcache/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+
+# Data files (uncomment if you don't want to track RDS files)
+# *.rds 
