@@ -1,6 +1,6 @@
-# ────────────────────────────────
+# ================================
 # PREDICT_TODAY.R - Daily Signals
-# ────────────────────────────────
+# ================================
 library(tidyquant)
 library(tidyverse)
 library(tidymodels)
